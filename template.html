@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        div {
+            border: solid thin red;
+            float: left;
+            font-size: 10px;
+        }
+        #my-new-id{
+            color:orange;
+            font-size: 30px;
+        }
+
+        .clear {
+            clear: both;
+
+        }
+    </style>
+    <script src="js/jquery.js"></script>
+    <script>
+        var data;
+        $(document).ready(function () {
+            $.ajax({
+                beforeSend: function (request) {
+                    request.setRequestHeader("X-Master-Key", '$2b$10$./Uwhr7/EJ75tfDG0IKumey9HX9Mj2h67EuUzZs5xhuUmUfYyUBNu');
+                },
+                dataType: "json",
+                url: 'https://api.jsonbin.io/v3/b/63b57cdb01a72b59f240ede2',
+                success: function (r) {
+                    data = r.record;
+                    console.log(data);
+                    PrintElements();
+                }
+            });
+        });
+
+        function PrintElements() {
+            var index = 1;
+            var body = $("body");
+            data.Questions.forEach(q => {
+                var newDiv = CreateElement("div", "divQuestion-" + q.ID);
+                newDiv.addClass("col-6")
+                var pText = CreateElement("p", "pQuestionText-" + q.ID);
+                pText.text(`${q.ID} - ${q.Text}`);
+                var olChoices = CreateElement("ol", "olQuestionChoices-" + q.ID)
+                olChoices.attr("type", "A");
+                q.Choices.forEach(c => {
+                    var newChoice = CreateElement("li", `liQuestion-${q.ID}-choice-${c.ID}`);
+                    newChoice.attr("isAnswer", c.IsAnswer);
+                    newChoice.text(c.Text);
+                    olChoices.append(newChoice);
+                })
+                newDiv.append(pText);
+                if (RandomBool()) {
+                    var img = CreateElement("img", `imgQuestion-${q.ID}`);
+                    img.attr("src", `https://via.placeholder.com/468x${RadnomNumber(60,150)}?text=Soru+Resmi+Buraya+Gelecek+Soru+ID+=${q.ID}`);
+                    img.addClass("col-9");
+                    if (RandomBool()) {
+                        //üst
+                        newDiv.prepend(img);
+                    } else {
+                        //alt
+                        newDiv.append(img);
+                    }
+
+                }
+                newDiv.append(olChoices);
+                body.append(newDiv);
+                console.log(newDiv.outerWidth());
+                /* if (index % 2 == 0) {
+                    var divClear = CreateElement("div", `divClear-${index}`);
+                    divClear.addClass("clear");
+                    body.append(divClear);
+                }
+                index++; */
+            });
+
+
+        }
+
+        function CreateElement(tag, elementId) {
+            var str = `<${tag}></${tag}>`;
+            var element = $(str).attr("id", elementId);
+            if (tag == "input" || tag == "br") {
+                str = `<${tag}/>`;
+                element = $(str);
+            }
+            return element;
+        }
+
+        function RandomBool() {
+            return RadnomNumber(0,1000) % 2 == 0 ? true : false;
+        }
+
+        function RadnomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>
