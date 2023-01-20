@@ -11,22 +11,67 @@
     <style>
         * {
             padding: 0;
-            margin: 0;
+            margin-bottom: 0 !important;
         }
 
-        div {
-            border: solid thin red;
-            float: left;
-            font-size: 10px;
+        .page {
+            width: 21cm;
+            min-height: 29.7cm;
+            padding: 2cm;
+            margin: 1cm auto;
+            border: 1px #D3D3D3 solid;
+            border-radius: 5px;
+            background: white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
-        #my-new-id{
-            color:orange;
+
+
+        #content {
+            column-count: 2;
+            column-gap: 10px;
+            column-fill: balance;
+            column-rule: thin solid black;
+        }
+
+        .divQuestion {
+            border: solid thin red;
+            font-size: 10px;
+            width: 100%;
+            display: inline-block;
+        }
+
+        #my-new-id {
+            color: orange;
             font-size: 30px;
         }
 
         .clear {
             clear: both;
 
+        }
+
+        ol li::marker {
+            font-weight: bold;
+
+        }
+
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media print {
+            .page {
+                margin: 0;
+                border: initial;
+                border-radius: initial;
+                width: initial;
+                min-height: initial;
+                box-shadow: initial;
+                background: initial;
+                page-break-after: always;
+            }
         }
     </style>
     <script src="js/jquery.js"></script>
@@ -42,19 +87,21 @@
                 success: function (r) {
                     data = r.record;
                     console.log(data);
-                    PrintElements();
+                    PrintElements(0, 0);
                 }
             });
         });
 
-        function PrintElements() {
-            var index = 1;
-            var body = $("body");
+        function PrintElements(indexPage, indexQuestion) {
+            //var index = 1;
+            var body = $("#content");
+            var page = CreateElement("div", "divPage-" + indexPage);
             data.Questions.forEach(q => {
                 var newDiv = CreateElement("div", "divQuestion-" + q.ID);
-                newDiv.addClass("col-6")
+                //newDiv.addClass("col-6");
+                newDiv.addClass("divQuestion");
                 var pText = CreateElement("p", "pQuestionText-" + q.ID);
-                pText.text(`${q.ID} - ${q.Text}`);
+                pText.html(`<b>${++indexQuestion}</b> - ${q.Text}`);
                 var olChoices = CreateElement("ol", "olQuestionChoices-" + q.ID)
                 olChoices.attr("type", "A");
                 q.Choices.forEach(c => {
@@ -66,13 +113,13 @@
                 newDiv.append(pText);
                 if (RandomBool()) {
                     var img = CreateElement("img", `imgQuestion-${q.ID}`);
-                    img.attr("src", `https://via.placeholder.com/468x${RadnomNumber(60,150)}?text=Soru+Resmi+Buraya+Gelecek+Soru+ID+=${q.ID}`);
+                    img.attr("src", `https://via.placeholder.com/468x${RadnomNumber(60, 150)}?text=Soru+Resmi+Buraya+Gelecek+Soru+ID+=${q.ID}`);
                     img.addClass("col-9");
                     if (RandomBool()) {
-                        //üst
+                        //resim üstte olsun
                         newDiv.prepend(img);
                     } else {
-                        //alt
+                        //resim altta olsun
                         newDiv.append(img);
                     }
 
@@ -102,7 +149,7 @@
         }
 
         function RandomBool() {
-            return RadnomNumber(0,1000) % 2 == 0 ? true : false;
+            return RadnomNumber(0, 1000) % 2 == 0 ? true : false;
         }
 
         function RadnomNumber(min, max) {
@@ -113,6 +160,9 @@
 </head>
 
 <body>
+    <div id="content">
+
+    </div>
 
 </body>
 
